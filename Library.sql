@@ -30,6 +30,12 @@ PRIMARY KEY(id)
 CREATE TABLE Registered_members (
 );
 
+CREATE TABLE Department (
+department_type VARCHAR(50) NOT NULL,
+staff_id INT NOT NULL, 
+staff_member VARCHAR(60) NOT NULL
+);
+
 CREATE TABLE Facilites (
 deparment VARCHAR(60) NOT NULL,
 floor_number VARCHAR(20),
@@ -43,6 +49,7 @@ unisex_toilets INT NOT NULL
 );
 
 
+#Books section
 
 INSERT INTO Books (name)
 VALUES ('Lord Of The Rings'), ('Catcher in the Rye'), ('Don Quixote'), ('Harry Potter and the Sorcerers Stone'), ('
@@ -59,10 +66,12 @@ VALUES ('December 3rd. 2023.', 'N/A', 'December 12th. 2023.', 'Lord Of The Rings
        ('Semptember 25th. 2023.', 'N/A', 'October 9th. 2023.', 'And Then There Were None', 5),
        ('N/A', 'Febuary 24th. 2024.', 'March 9th. 2024.', 'Alices Adventures in Wonderland', 6);
 
+#Sales section
 SELECT * FROM SALES;
-
+#selecting from sales where people ddin't rent a book.
 SELECT * FROM SALES WHERE rent_date = 'N/A';
 
+#establishing relationship between books and sales.
 SELECT * FROM Books
 JOIN sales ON book_id = books.id;
 
