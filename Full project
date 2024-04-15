@@ -1,0 +1,150 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS libraryca1groupj;
+
+-- Use the database
+USE libraryca1groupj;
+
+
+-- Create tables
+CREATE TABLE Authors (
+    author_id INT AUTO_INCREMENT PRIMARY KEY,
+    author_name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_title VARCHAR(255) NOT NULL,
+    author_id INT,
+    genre VARCHAR(100),
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id)
+);
+
+CREATE TABLE Members (
+    member_id INT AUTO_INCREMENT PRIMARY KEY,
+    member_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    join_date DATE
+);
+
+CREATE TABLE Loans (
+    loan_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT,
+    member_id INT,
+    loan_date DATE,
+    return_date DATE,
+    FOREIGN KEY (book_id) REFERENCES Books(book_id),
+    FOREIGN KEY (member_id) REFERENCES Members(member_id)
+);
+
+CREATE TABLE Facilities (
+    department VARCHAR(60) NOT NULL,
+    floor_number VARCHAR(20),
+    computers INT NOT NULL,
+    quiet_rooms INT NOT NULL,
+    private_rooms INT NOT NULL,
+    male_toilets INT NOT NULL,
+    female_toilets INT NOT NULL,
+    disabled_toilets INT NOT NULL,
+    unisex_toilets INT NOT NULL,
+    PRIMARY KEY (floor_number)
+);
+
+CREATE TABLE Library_Staff (
+    staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    staff_name VARCHAR(100) NOT NULL,
+    position VARCHAR(100),
+    department VARCHAR(100),
+    age INT,
+    sex VARCHAR(2),
+    salary DECIMAL(10, 2),
+    hours_of_work INT
+);
+
+-- Insert authors
+INSERT INTO Authors (author_name) VALUES 
+('J.K. Rowling'),
+('Jeff Kinney'),
+('Michael Morpurgo'),
+('David Walliams'),
+('Roald Dahl'),
+('J.R.R. Tolkien'),
+('Agatha Christie'),
+('Stephen King'),
+('Jane Austen'),
+('George Orwell');
+
+-- Insert books
+INSERT INTO Books (book_title, author_id, genre) VALUES 
+('Harry Potter and the Sorcerer''s Stone', 1, 'Fantasy'),
+('Diary of a Wimpy Kid', 2, 'Children''s Fiction'),
+('War Horse', 3, 'Historical Fiction'),
+('The Boy in the Dress', 4, 'Children''s Fiction'),
+('Matilda', 5, 'Children''s Fiction'),
+('The Lord of the Rings', 6, 'Fantasy'),
+('Murder on the Orient Express', 7, 'Mystery'),
+('The Shining', 8, 'Horror'),
+('Pride and Prejudice', 9, 'Romance'),
+('1984', 10, 'Dystopian Fiction');
+
+-- Insert members with full names and emails (updated to Gmail)
+INSERT INTO Members (member_name, email, join_date) VALUES 
+('Derek Diaba', 'derek.dibee@gmail.com', '2023-03-04'),
+('Stanley Uchendu', 'stanley.uchendu@gmail.com', '2023-03-03'),
+('Marcell Sanni', 'marcell885@gmail.com', '2023-09-07'),
+('Christiano Ronaldo', 'SimplyRonCR7@gmail.com', '2023-08-06'),
+('Lionel Messi', 'LeoMessi@gmail.com', '2023-01-01'),
+('Emma Kane', 'emma.kane@gmail.com', '2023-05-10'),
+('Tom Jackson', 'tom.jackson@gmail.com', '2023-06-15'),
+('Jennifer Opal', 'jennifer.opal@gmail.com', '2023-07-20'),
+('Leonardo Dio', 'leonardo.dio@gmail.com', '2023-08-25'),
+('Scarlett Johan', 'scarlett.johan@gmail.com', '2023-09-30');
+
+-- Insert loans with return dates
+INSERT INTO Loans (book_id, member_id, loan_date, return_date) VALUES 
+(1, 1, '2024-01-02', '2024-01-30'), -- Derek Diaba borrowing Harry Potter
+(2, 2, '2024-01-03', '2024-02-05'), -- Stanley Uchendu borrowing Diary of a Wimpy Kid
+(3, 3, '2024-01-04', '2024-02-10'), -- Marcell Sanni borrowing War Horse
+(4, 4, '2024-01-18', '2024-02-20'), -- Christiano Ronaldo borrowing The Boy in the Dress
+(5, 5, '2024-01-01', '2024-02-15'), -- Lionel Messi borrowing Matilda
+(6, 6, '2024-02-01', '2024-02-25'), -- Emma Kane borrowing The Lord of the Rings
+(7, 7, '2024-02-02', '2024-03-05'), -- Tom Jackson borrowing Murder on the Orient Express
+(8, 8, '2024-02-03', '2024-03-10'), -- Jennifer Opal borrowing The Shining
+(9, 9, '2024-02-04', '2024-03-15'), -- Leonardo Dio borrowing Pride and Prejudice
+(10, 10, '2024-02-05', '2024-03-20'); -- Scarlett Johan borrowing 1984
+
+-- Insert facilities
+INSERT INTO Facilities (department, floor_number, computers, quiet_rooms, private_rooms, male_toilets, female_toilets, disabled_toilets, unisex_toilets)
+VALUES 
+('IT', 'Floor 2', 5, 2, 4, 2, 2, 1, 1),
+('Librarian', 'Floor 1', 3, 2, 6, 2, 2, 1, 1),
+('Management', 'Floor 3', 4, 4, 4, 2, 2, 1, 1);
+
+-- Insert staff information
+INSERT INTO Library_Staff (staff_name, position, department, age, sex, salary, hours_of_work)
+VALUES 
+('D. Osama', 'Manager', 'IT', 46, 'M', 35000, 40),
+('J. Babatunde', 'Librarian', 'Library', 27, 'M', 26000, 35),
+('H. Malik', 'Manager', 'Management', 53, 'M', 45000, 40),
+('A. Andre', 'Librarian', 'Library', 25, 'F', 23000, 35),
+('K. Keely', 'Librarian', 'Library', 34, 'F', 25000, 35);
+
+-- Query borrowing information for all members
+SELECT Members.member_name, Books.book_title, Authors.author_name, Loans.loan_date, Loans.return_date
+FROM Loans
+JOIN Members ON Loans.member_id = Members.member_id
+JOIN Books ON Loans.book_id = Books.book_id
+JOIN Authors ON Books.author_id = Authors.author_id;
+
+-- Query to get the total number of books borrowed by each member
+SELECT Members.member_name, COUNT(Loans.book_id) AS total_books_borrowed
+FROM Members
+LEFT JOIN Loans ON Members.member_id = Loans.member_id
+GROUP BY Members.member_name;
+
+-- Query to retrieve information about library staff
+SELECT staff_id, staff_name, position, department, age, sex, salary, hours_of_work
+FROM Library_Staff;
+
+
+-- Query to retrieve information about facilities
+SELECT * FROM Facilities;
